@@ -6,9 +6,9 @@ import 'package:open_earable_flutter/open_earable_flutter.dart';
 import 'package:open_wearable/apps/heart_tracker/widgets/heart_tracker_page.dart';
 import 'package:open_wearable/apps/posture_tracker/model/earable_attitude_tracker.dart';
 import 'package:open_wearable/apps/posture_tracker/view/posture_tracker_view.dart';
+import 'package:open_wearable/apps/zen_master/widgets/zen_master_view.dart';
 import 'package:open_wearable/apps/widgets/select_earable_view.dart';
 import 'package:open_wearable/apps/widgets/app_tile.dart';
-
 
 class AppInfo {
   final String logoPath;
@@ -29,15 +29,17 @@ List<AppInfo> _apps = [
     logoPath: "lib/apps/posture_tracker/assets/logo.png",
     title: "Posture Tracker",
     description: "Get feedback on bad posture",
-    widget: SelectEarableView(startApp: (wearable, sensorConfigProvider) {
-      return PostureTrackerView(
-        EarableAttitudeTracker(
-          wearable.requireCapability<SensorManager>(),
-          sensorConfigProvider,
-          wearable.name.endsWith("L"),
-        ),
-      );
-    },),
+    widget: SelectEarableView(
+      startApp: (wearable, sensorConfigProvider) {
+        return PostureTrackerView(
+          EarableAttitudeTracker(
+            wearable.requireCapability<SensorManager>(),
+            sensorConfigProvider,
+            wearable.name.endsWith("L"),
+          ),
+        );
+      },
+    ),
   ),
   AppInfo(
     logoPath: "lib/apps/heart_tracker/assets/logo.png",
@@ -47,9 +49,12 @@ List<AppInfo> _apps = [
       startApp: (wearable, _) {
         if (wearable.hasCapability<SensorManager>()) {
           //TODO: show alert if no ppg sensor is found
-          Sensor ppgSensor = wearable.requireCapability<SensorManager>().sensors.firstWhere(
-            (s) => s.sensorName.toLowerCase() == "photoplethysmography".toLowerCase(),
-          );
+          Sensor ppgSensor =
+              wearable.requireCapability<SensorManager>().sensors.firstWhere(
+                    (s) =>
+                        s.sensorName.toLowerCase() ==
+                        "photoplethysmography".toLowerCase(),
+                  );
 
           return HeartTrackerPage(ppgSensor: ppgSensor);
         }
@@ -59,6 +64,37 @@ List<AppInfo> _apps = [
           ),
           body: Center(
             child: PlatformText("No PPG Sensor Found"),
+          ),
+        );
+      },
+    ),
+  ),
+  AppInfo(
+    logoPath: "lib/apps/heart_tracker/assets/logo.png",
+    title: "Zen Master",
+    description: "Focus on stillness",
+    widget: SelectEarableView(
+      startApp: (wearable, sensorConfigProvider) {
+        if (wearable.hasCapability<SensorManager>()) {
+          final SensorManager sensorManager =
+              wearable.requireCapability<SensorManager>();
+          final bool hasAccel = sensorManager.sensors.any(
+            (s) => s.sensorName.toLowerCase() == "accelerometer".toLowerCase(),
+          );
+          if (hasAccel) {
+            return ZenMasterView(
+              wearable: wearable,
+              sensorConfigurationProvider: sensorConfigProvider,
+            );
+          }
+        }
+
+        return PlatformScaffold(
+          appBar: PlatformAppBar(
+            title: PlatformText("Zen Master"),
+          ),
+          body: Center(
+            child: PlatformText("No IMU Sensor Found"),
           ),
         );
       },
@@ -75,7 +111,7 @@ class AppsPage extends StatelessWidget {
       appBar: PlatformAppBar(
         title: PlatformText("Apps"),
         trailingActions: [
-            PlatformIconButton(
+          PlatformIconButton(
             icon: Icon(context.platformIcons.bluetooth),
             onPressed: () {
               context.push('/connect-devices');
