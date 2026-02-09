@@ -36,7 +36,7 @@ class AudioNumbService {
     _volumeController.setVolume(target);
   }
 
-  /// Request restoration to the initial volume after the debounce window.
+  /// Request restoration to the initial volume after the debounce window
   void restoreAudio() {
     _restoreQueued = true;
     if (_debounceTimer == null || !_debounceTimer!.isActive) {
@@ -44,6 +44,7 @@ class AudioNumbService {
     }
   }
 
+  /// Restore the audio to the initial volume after the debounce window
   void _handleDebounceExpired() async {
     if (!_restoreQueued) return;
     _restoreQueued = false;
