@@ -69,7 +69,6 @@ class ZenMasterViewModel extends ChangeNotifier {
 
     // Reset and begin the 5-second countdown.
     cancelTimers();
-    startImuTracking();
     phase = ZenMasterPhase.countdown;
     countdownRemaining = _countdownSeconds;
     remainingDuration = selectedDuration;
@@ -93,6 +92,8 @@ class ZenMasterViewModel extends ChangeNotifier {
     cancelTimers();
     phase = ZenMasterPhase.running;
     remainingDuration = selectedDuration;
+    isInDeadzone = true;
+    startImuTracking();
     notifyListeners();
 
     _sessionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {

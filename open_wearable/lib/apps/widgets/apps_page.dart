@@ -70,9 +70,9 @@ List<AppInfo> _apps = [
     ),
   ),
   AppInfo(
-    logoPath: "lib/apps/heart_tracker/assets/logo.png",
+    logoPath: "lib/apps/zen_master/assets/logo.png",
     title: "Zen Master",
-    description: "Focus on stillness",
+    description: "Lowers Audio when you move",
     widget: SelectEarableView(
       startApp: (wearable, sensorConfigProvider) {
         if (wearable.hasCapability<SensorManager>()) {

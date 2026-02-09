@@ -8,6 +8,11 @@ import 'package:open_wearable/apps/zen_master/model/view_model.dart';
 import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
 import 'package:provider/provider.dart';
 
+/// View for Zen Master: helps you stay still for meditation
+///
+/// The view displays a play button/countdown timer/timer in the center of the screen,
+/// and a dial/stop button in the bottom of the screen.
+///
 class ZenMasterView extends StatefulWidget {
   final Wearable? wearable;
   final SensorConfigurationProvider? sensorConfigurationProvider;
@@ -73,8 +78,10 @@ class _ZenMasterViewState extends State<ZenMasterView> {
                   // Clamp positions so fixed-size widgets never overflow.
                   final double playTop = math.max(
                     0,
-                    math.min(height - _centerDisplaySize,
-                        playCenterY - _centerDisplaySize / 2),
+                    math.min(
+                      height - _centerDisplaySize,
+                      playCenterY - _centerDisplaySize / 2,
+                    ),
                   );
                   final double dialTop = math.max(
                     0,
@@ -124,8 +131,8 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     );
   }
 
+  /// Animates the center display (play button, countdown timer, timer) between the current phase and the next phase.
   Widget animatedCenterDisplay(BuildContext context, ZenMasterViewModel model) {
-    // Animate between play, countdown, and timer states.
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       switchInCurve: Curves.easeOut,
@@ -148,6 +155,7 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     );
   }
 
+  /// Displays the center display (play button, countdown timer, timer) based on the current phase.
   Widget centerDisplay(BuildContext context, ZenMasterViewModel model) {
     switch (model.phase) {
       case ZenMasterPhase.idle:
@@ -167,6 +175,7 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     }
   }
 
+  /// Displays the play button in the center of the screen.
   Widget playButton(BuildContext context, ZenMasterViewModel model) {
     return GestureDetector(
       onTap: model.startCountdown,
@@ -186,8 +195,12 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     );
   }
 
-  Widget ringDisplay(BuildContext context, ZenMasterViewModel model,
-      {required String label}) {
+  /// Displays the ring display (for countdown timer and timer)
+  Widget ringDisplay(
+    BuildContext context,
+    ZenMasterViewModel model, {
+    required String label,
+  }) {
     // Ring color reflects deadzone status (green = still, red = moving).
     final Color ringColor = model.isInDeadzone ? _green : Colors.red;
     return Container(
@@ -209,6 +222,7 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     );
   }
 
+  /// Ensures consistent size of bottom area containing dial or stop button
   Widget bottomArea(BuildContext context, ZenMasterViewModel model) {
     return Center(
       child: SizedBox(
@@ -220,9 +234,11 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     );
   }
 
+  /// Dial in idle, stop button in countdown/running, animated between them.
   Widget dialOrStopButtonContent(
-      BuildContext context, ZenMasterViewModel model) {
-    // Dial in idle, stop button in countdown/running, animated between them.
+    BuildContext context,
+    ZenMasterViewModel model,
+  ) {
     final Widget content = model.phase == ZenMasterPhase.idle
         ? durationPicker(model)
         : PlatformElevatedButton(
@@ -262,6 +278,7 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     );
   }
 
+  /// Pick duration in dial - chose CupertinoTimerPicker because it works better for use case and design.
   Widget durationPicker(ZenMasterViewModel model) {
     return SizedBox(
       height: _pickerHeight,
