@@ -15,9 +15,8 @@ enum ZenMasterPhase {
 /// View model for Zen Master: manages session timing and IMU state.
 class ZenMasterViewModel extends ChangeNotifier {
   static const int _countdownSeconds = 5;
-  // Device and sensor config are optional to allow UI-only testing.
-  final Wearable? wearable;
-  final SensorConfigurationProvider? sensorConfigurationProvider;
+  final Wearable wearable;
+  final SensorConfigurationProvider sensorConfigurationProvider;
 
   // Public UI state.
   ZenMasterPhase phase = ZenMasterPhase.idle;
@@ -117,7 +116,6 @@ class ZenMasterViewModel extends ChangeNotifier {
 
   /// Reset the UI state to idle.
   void resetToIdle() {
-    // Restore default UI state after stop or completion.
     stopImuTracking();
     _restoreAudioIfNeeded();
     phase = ZenMasterPhase.idle;
@@ -133,7 +131,7 @@ class ZenMasterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Begin IMU tracking (no-op if no wearable).
+  /// Begin IMU tracking.
   void startImuTracking() {
     _imuTracker.start();
   }

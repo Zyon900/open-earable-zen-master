@@ -6,32 +6,37 @@ import 'package:open_wearable/apps/zen_master/model/filters/ewma_filter.dart';
 import 'package:open_wearable/apps/zen_master/model/filters/low_pass_filter.dart';
 import 'package:open_wearable/view_models/sensor_configuration_provider.dart';
 
-/// Tracks IMU motion and emits deadzone state changes.
+/// Tracks IMU motion and emits deadzone state changes
 ///
 /// Uses accelerometer magnitude as a motion proxy, with an EWMA to smooth
-/// noise, and compares it against a fixed threshold to detect movement.
+/// noise, and compares it against a fixed threshold to detect movement
 class ZenMasterImuTracker {
-  // Threshold for "still" vs "moving" after smoothing.
+  // Threshold for "still" vs "moving" after smoothing
   static const double _deadzoneThreshold = 0.01;
-  // EWMA smoothing factor for linear-accel magnitude.
+  // EWMA smoothing factor for linear-accel magnitude
   static const double _ewmaAlpha = 0.2;
-  // Low-pass filter for gravity estimate in device frame.
+  // Low-pass filter for gravity estimate
   static const double _gravityFilterAlpha = 0.9;
 
-  // Earable device and configuration provider for IMU streaming.
+  // Earable device and configuration provider for IMU streaming
   final Wearable? _wearable;
   final SensorConfigurationProvider? _sensorConfigurationProvider;
-  // Callback to inform the view model/UI of deadzone transitions.
+  // Callback to inform the view model/UI of deadzone transitions
   final void Function(bool) _onDeadzoneChanged;
-
+  // Subscription to the accelerometer stream
   StreamSubscription<SensorValue>? _accelSubscription;
   Sensor? _accelSensor;
   late final EwmaFilter _magnitudeFilter = EwmaFilter(alpha: _ewmaAlpha);
+  // Low-pass filter for gravity estimates
   late final LowPassFilter _gravX = LowPassFilter(alpha: _gravityFilterAlpha);
   late final LowPassFilter _gravY = LowPassFilter(alpha: _gravityFilterAlpha);
   late final LowPassFilter _gravZ = LowPassFilter(alpha: _gravityFilterAlpha);
+  // Whether the device is in the deadzone
   bool _isInDeadzone = true;
 
+  /// [wearable] is the wearable device
+  /// [sensorConfigurationProvider] is the sensor configuration provider
+  /// [onDeadzoneChanged] is the callback to inform the view model/UI of deadzone transitions
   ZenMasterImuTracker({
     required Wearable? wearable,
     required SensorConfigurationProvider? sensorConfigurationProvider,

@@ -14,13 +14,13 @@ import 'package:provider/provider.dart';
 /// and a dial/stop button in the bottom of the screen.
 ///
 class ZenMasterView extends StatefulWidget {
-  final Wearable? wearable;
-  final SensorConfigurationProvider? sensorConfigurationProvider;
+  final Wearable wearable;
+  final SensorConfigurationProvider sensorConfigurationProvider;
 
   const ZenMasterView({
     super.key,
-    this.wearable,
-    this.sensorConfigurationProvider,
+    required this.wearable,
+    required this.sensorConfigurationProvider,
   });
 
   @override
@@ -69,13 +69,13 @@ class _ZenMasterViewState extends State<ZenMasterView> {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final double height = constraints.maxHeight;
-                  // Arrange vertical space with 2/1/1/1/1 slots.
+                  // Arrange vertical space for layout
                   final double slotHeight = height / 6;
                   final double playCenterY = slotHeight * 2.5;
                   final double dialCenterY = slotHeight * 4.5;
                   final String statusLabel = model.statusLabelText();
 
-                  // Clamp positions so fixed-size widgets never overflow.
+                  // Clamp positions so fixed-size widgets don't overflow
                   final double playTop = math.max(
                     0,
                     math.min(
@@ -290,6 +290,7 @@ class _ZenMasterViewState extends State<ZenMasterView> {
     );
   }
 
+  /// Format duration for display in timer display.
   String formatDuration(Duration duration) {
     final int totalSeconds = duration.inSeconds.clamp(0, 359999);
     final int minutes = totalSeconds ~/ 60;

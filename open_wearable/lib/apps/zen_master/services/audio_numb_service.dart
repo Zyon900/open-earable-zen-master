@@ -12,11 +12,11 @@ class AudioNumbService {
   static const Duration _debounceDuration = Duration(seconds: 2);
 
   final VolumeController _volumeController = VolumeController();
+  final bool _showSystemUI = false;
 
   double? _initialVolume;
   Timer? _debounceTimer;
   bool _restoreQueued = false;
-  bool _showSystemUI = false;
 
   /// Apply a numbed audio level (half the initial volume).
   ///
@@ -31,6 +31,7 @@ class AudioNumbService {
       _initialVolume = await _volumeController.getVolume();
       _volumeController.showSystemUI = _showSystemUI;
     }
+
     final double target = (_initialVolume!) * 0.5;
     _volumeController.setVolume(target);
   }
